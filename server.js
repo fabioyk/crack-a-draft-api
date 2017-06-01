@@ -121,7 +121,7 @@ app.get("/api/draft/count", function(req, res) {
       app.validationError(res);
       return;
     }
-    dbManip.getDraftsCount({drafter: username}, function(err, count) {
+    dbManip.getDraftsCount({drafter: { $regex : new RegExp('^'+username+"$", "i") }}, function(err, count) {
       app.treatResult(res, err, {count: count});
     });
   } else {
@@ -224,9 +224,8 @@ var listener = app.listen(process.env.PORT, function () {
   dbManip.init();
   
   
-  //dbManip.uploadAllCards();  
+  //setTimeout(function(){ dbManip.uploadAllCards(); },1000);
   //setTimeout(function(){ dbManip.uploadAllSets(); },1000);
-  //console.log(validation.isHex('591e127b6546065dd904a17g'))
   /*setTimeout(function() {
     cardManip.uploadDraft('59169946c5eba0725e3178fa', function(err, res) {
         console.log(err);
