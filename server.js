@@ -1,64 +1,18 @@
 // server.js
-// where your node app starts
-
-// init project
 var express = require('express');
 var app = express();
 var multer  =   require('multer');
 var processDraft = require('./manageDraftUpload');
-var dbManip = require('./databaseManipulation');
+var dbManip = require('./database/databaseManipulation');
 var validation = require('./validation');
-
-var bodyParser =    require("body-parser");
-app.use(bodyParser.json());
-
+var utils = require('./utils');
 var cors = require('cors');
+var bodyParser = require("body-parser");
+var fs = require('fs');
+
+app.use(bodyParser.json());
 app.use(cors());
-
-app.treatResult = function(res, err, obj) {
-  if (err) {
-    console.log(err);
-    res.json({error:err});
-  } else {
-    res.json(obj);
-  }
-}
-
-app.treatResultArr = function(res, err, obj) {
-  if (err) {
-    console.log(err);
-    res.json([{error:err}]);
-  } else {
-    res.json(obj);
-  }
-}
-
-app.validationError = function(res) {
-  res.json({error: 'Validation error'});
-}
-
-app.all('/', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Content-Type");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  if (dbManip.readyToGo) {
-    next();
-  } else {
-    setTimeout(next, 1000);
-  }
-    
-  });
-
-// we've started you off with Express, 
-// but feel free to use whatever libs or frameworks you'd like through `package.json`.
-
-// http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
-
-// http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + '/views/index.html');
-});
 
 
 var storage =   multer.diskStorage({
@@ -69,15 +23,36 @@ var storage =   multer.diskStorage({
     callback(null, file.fieldname + '-' + Date.now());
   }
 });
-var upload = multer({ storage : storage }).array('file'); // todo check multiple uploads
+var upload = multer({ storage : storage, limits: { fileSize:  1000000 } }).array('file');
 
 
-var fs = require('fs');
+
+app.all('/', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  if (dbManip.readyToGo) {
+    next();
+  } else {
+    setTimeout(next, 500);
+  }    
+});
+
+
+
+
 
 app.post("/api/draft", function (req, res, next) {
   upload(req,res,function(err) {
     if(err) {
       console.log(err);
+      if (req && req.files && req.files[0] && req.files[0].path) {
+        try {
+          fs.unlink('./' + req.files[0].path);
+        } finally {
+
+        }
+      }
       return res.json({error: "Error uploading file."});
     }
     try {
@@ -89,7 +64,7 @@ app.post("/api/draft", function (req, res, next) {
         // todo validate draft
         var anonymize = req.query.anonymous;
         if (anonymize && anonymize !== 'true') {
-          app.validationError(res);
+          utils.validationError(res);
           return;
         }
         processDraft(data, req.files[0].originalname, anonymize, function(err, drafts) {
@@ -102,7 +77,7 @@ app.post("/api/draft", function (req, res, next) {
               });
             });
           }
-          app.treatResult(res, err, {ids: drafts, filename: req.files[0].originalname});
+          utils.treatResult(res, err, {ids: drafts, filename: req.files[0].originalname});
 
           next();
         });      
@@ -118,15 +93,15 @@ app.get("/api/draft/count", function(req, res) {
   
   if (username) {
     if (username && !validation.isUsername(username)) {
-      app.validationError(res);
+      utils.validationError(res);
       return;
     }
-    dbManip.getDraftsCount({drafter: { $regex : new RegExp('^'+username+"$", "i") }}, function(err, count) {
-      app.treatResult(res, err, {count: count});
+    dbManip.getDraftsCount(username, function(err, count) {
+      utils.treatResult(res, err, {count: count});
     });
   } else {
-    dbManip.getDraftsCount({}, function(err, count) {
-      app.treatResult(res, err, {count: count});
+    dbManip.getDraftsCount('', function(err, count) {
+      utils.treatResult(res, err, {count: count});
     });
   }
   
@@ -140,29 +115,29 @@ app.get("/api/draft", function(req, res) {
   if ((username && !validation.isUsername(username)) ||
       (draftId && !validation.isDraftId(draftId)) ||
       (format && !validation.isFormat(format))) {
-    app.validationError(res);
+    utils.validationError(res);
     return;
   }
   
   if (draftId) {
     var isEmbed = req.query.embed === 'true';
     dbManip.getDraft(draftId, isEmbed, function(err, draft) {
-      app.treatResult(res, err,draft);
+      utils.treatResult(res, err,draft);
     })
   } else if (username) {
     // get all drafts by username    
-    dbManip.getDrafts({drafter: { $regex : new RegExp('^'+username+"$", "i") }}, +req.query.pageSize, +req.query.pageNumber, {submitDate: -1}, function(err, drafts) {
-      app.treatResultArr(res, err, drafts);
+    dbManip.getDrafts(username, +req.query.pageSize, +req.query.pageNumber, function(err, drafts) {
+      utils.treatResultArr(res, err, drafts);
     });
   } else if (format) {
     // get random draft from format
     var formatAndSize = format.split(',');
     dbManip.getRandomDraftByFormat(formatAndSize[0], +formatAndSize[1], function(err, draft) {
-      app.treatResult(res, err, draft);
+      utils.treatResult(res, err, draft);
     });
   } else if (req.query.pageSize) {
-    dbManip.getDrafts({}, +req.query.pageSize, 0, {submitDate: -1}, function(err, drafts) {
-      app.treatResultArr(res, err, drafts);
+    dbManip.getDrafts('', +req.query.pageSize, +req.query.pageNumber, function(err, drafts) {
+      utils.treatResultArr(res, err, drafts);
     });    
   } else {
     res.json({error: 'Error'});
@@ -177,12 +152,12 @@ app.post("/api/crack", function(req, res, next) {
   if (!validation.isDraftPicks(params.picks, 8) ||
       !validation.isDraftId(params.draftId) ||
       !validation.isArchetype(params.archetype)) {
-    app.validationError(res);
+    utils.validationError(res);
     return;
   }
   
   dbManip.uploadCrack(params.draftId, params.picks, params.archetype, function(err, crackId) {
-    app.treatResult(res, err, {id: crackId});
+    utils.treatResult(res, err, {id: crackId});
     
     next();
   });
@@ -190,7 +165,7 @@ app.post("/api/crack", function(req, res, next) {
 
 app.get("/api/format", function(req, res) {
   dbManip.getAllFormats(function(err, formats) {
-    app.treatResult(res, err, formats);
+    utils.treatResult(res, err, formats);
   });
 });
 
@@ -200,18 +175,18 @@ app.get("/api/card", function(req, res) {
   
   if ((cardName && !validation.isCardName(cardName)) ||
       (cardArray && !validation.isCardArray(cardArray))) {
-    app.validationError(res);
+    utils.validationError(res);
     return;
   }
   
   if (cardName) {
     dbManip.getCardsFromList([cardName], function(err, card) {
-      app.treatResult(res, err, card);
+      utils.treatResult(res, err, card);
     });
   } else if (cardArray) {
     cardArray = JSON.parse(cardArray);
     dbManip.getCardsFromList(cardArray, function(err, card) {
-      app.treatResult(res, err, card);
+      utils.treatResult(res, err, card);
     });
   }
 });
@@ -223,14 +198,7 @@ var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
   dbManip.init();
   
-  
-  //setTimeout(function(){ dbManip.uploadAllCards(); },1000);
-  //setTimeout(function(){ dbManip.uploadAllSets(); },1000);
-  /*setTimeout(function() {
-    cardManip.uploadDraft('59169946c5eba0725e3178fa', function(err, res) {
-        console.log(err);
-        console.log(res); 
-      });
-  }, 1000);*/
-//  console.log(dbManip.generateDraftId('gregoryshol', 1494279204246, [14,11,10,5,15,10,8,14,6,12,7,10]));
+  //setTimeout(function(){ dbManip.uploadAllCards(); },1000);  //fetches allcards.json and uploads all of them
+  //setTimeout(function(){ dbManip.uploadAllSets(); },1000); //uploads the fixed array with all set names
+
 });
