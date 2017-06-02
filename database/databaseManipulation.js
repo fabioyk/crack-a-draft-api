@@ -124,6 +124,10 @@ var dbManip = {
       });
     }    
   },
+
+  getCardsFromList(cardArr, callback) {
+    cardManip.getCardsFromList(cardArr, callback, utils.createOkCallback(callback));
+  },
   
   //// ----------------------- CRACK MANIPULATION ----------------------- ////
   
