@@ -79,6 +79,31 @@ var draftManip = {
     
     return id;
   },
+
+  deleteDraft(queryObj, errCallback, okCallback) {
+    dbSchema.Draft.find(queryObj, function(err, drafts) {
+      utils.checkErr(err, drafts, errCallback, function(drafts) {
+        var formats = {};
+        drafts.forEach(function(draft) {
+          if (formats[draft.format]) {
+            formats[draft.format]--;
+          } else {
+            formats[draft.format] = -1;
+          }
+        });
+        Object.keys(formats).forEach(function(format) {
+          dbSchema.Format.update({mtgoName: format}, {$inc: {drafts: formats[draft.format]}}).exec(function(err, res) {
+            utils.checkErr(err, res, errCallback, function(res) {
+              dbSchema.Draft.remove(queryObj, function(err) {
+                utils.checkErr(err, null, errCallback, okCallback);
+              });
+            });
+          });
+        });
+      });
+    });
+    
+  }
 };
 
 module.exports = draftManip;

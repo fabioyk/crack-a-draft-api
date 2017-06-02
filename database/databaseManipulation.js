@@ -151,10 +151,14 @@ var dbManip = {
   
   //// ----------------------- STARTUP ----------------------- ////
 
-  uploadAllCards() {
-    cardManip.uploadAllCards();
+  uploadAllCards(setName) {
+    if (setName) {
+      cardManip.uploadAllCards('https://mtgjson.com/json/'+setName+'.json');
+    } else {
+      cardManip.uploadAllCards('https://mtgjson.com/json/AllCards.json');
+    }    
   },
-  
+
   uploadAllSets() {
     formatManip.uploadAllSets();
   }

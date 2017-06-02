@@ -56,8 +56,8 @@ var cardManip = {
     
   },
 
-  uploadAllCards() {
-    var apiUrl = 'https://mtgjson.com/json/AllCards.json';
+  uploadAllCards(jsonFileUrl) {
+    var apiUrl = jsonFileUrl;
     
     var colorLetter = ['W', 'U', 'B', 'R', 'G'];
     var colorNames = ['White', 'Blue', 'Black', 'Red', 'Green'];

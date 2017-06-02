@@ -111,6 +111,27 @@ var formatManip = {
     }
   },
 
+  editFormat(mtgoName, newName, callback) {
+    dbSchema.Format.findOne({mtgoName: mtgoName}, function(err, format) {
+      if (err) {
+        callback(err, null);
+      } else {
+        if (format) {
+          dbSchema.Format.findOneAndUpdate({mtgoName: mtgoName}, {name: newName}, function(err, format) {
+            if (err) {
+              callback(err, null);
+            } else {
+              callback(null, format);
+            }
+          });
+        } else {
+          formatManip.insertFormat(newName, mtgoName, 0, callback, utils.createOkCallback(callback));
+        }
+      }
+    });
+    
+  },
+
   uploadAllSets() {
     var sets = {'HOUHOUAKH': 'Hour of Devastation',
                 'AKHAKHAKH': 'Amonkhet',

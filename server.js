@@ -180,8 +180,4 @@ app.get("/api/card", function(req, res) {
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
   dbManip.init();
-  
-  //setTimeout(function(){ dbManip.uploadAllCards(); },1000);  //fetches allcards.json and uploads all of them
-  //setTimeout(function(){ dbManip.uploadAllSets(); },1000); //uploads the fixed array with all set names
-
 });
