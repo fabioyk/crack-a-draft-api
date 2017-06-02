@@ -112,6 +112,9 @@ module.exports = {
         return false;
       }
     }
+    if (format === 'random') {
+      return true;
+    }
     if (format.length !== 9) {
       return false;
     }
