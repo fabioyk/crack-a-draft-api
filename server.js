@@ -8,7 +8,17 @@ var utils = require('./server/utils');
 var cors = require('cors');
 var bodyParser = require("body-parser");
 var fs = require('fs');
-var upload = require('./server/fileUpload');
+var multer  =   require('multer');
+
+var storage =   multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, './uploads');
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.fieldname + '-' + Date.now());
+  }
+});
+var upload = multer({ storage : storage, limits: { fileSize:  1000000 } }).array('file');
 
 app.use(bodyParser.json());
 app.use(cors());
