@@ -52,7 +52,7 @@ var formatManip = {
       query.push({mtgoName: format});
     });
     dbSchema.Format.find({$or: query}, function(err, formats) {
-      utils.checkErrNotFound(err, formatFound, errCallback, okCallback);
+      utils.checkErrNotFound(err, formats, errCallback, okCallback);
     });
   },
   
