@@ -43,5 +43,8 @@ setTimeout(function() {
   if (process.argv[2] === 'uploadAllSets') {
     dbManip.uploadAllSets();
   }  
+  if (process.argv[2] === 'uploadAllFormats') {
+    formatManip.uploadAllSets();
+  }
 
 }, 1000);
