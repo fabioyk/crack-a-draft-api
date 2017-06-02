@@ -47,4 +47,6 @@ setTimeout(function() {
     dbManip.uploadAllSets();
   }
 
+  process.exit();
+
 }, 1000);
