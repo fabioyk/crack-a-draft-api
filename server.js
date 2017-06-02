@@ -9,16 +9,17 @@ var cors = require('cors');
 var bodyParser = require("body-parser");
 var fs = require('fs');
 var multer  =   require('multer');
+var Datauri = require('datauri');
 
-var storage =   multer.diskStorage({
+var storage = multer.memoryStorage();  /* multer.diskStorage({
   destination: function (req, file, callback) {
     callback(null, './uploads');
   },
   filename: function (req, file, callback) {
     callback(null, file.fieldname + '-' + Date.now());
   }
-});
-var upload = multer({ storage : storage, limits: { fileSize:  1000000 } }).array('file');
+});*/
+var upload = multer({ storage : storage, limits: { fileSize:  1000000 } }).single('file');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -39,45 +40,39 @@ app.post("/api/draft", function (req, res, next) {
   upload(req,res,function(err) {
     if(err) {
       console.log(err);
-      if (req && req.files && req.files[0] && req.files[0].path) {
-        try {
-          fs.unlink('./' + req.files[0].path);
-        } finally {
-
-        }
-      }
       return res.json({error: "Error uploading file."});
     }
-    try {
-      fs.readFile(req.files[0].path, 'utf8', function (err,data) {
-        if (err) {
-          res.json({error: "Error uploading file."});
-          return console.log(err);
-        }
-        // todo validate draft
-        var anonymize = req.query.anonymous;
-        if (anonymize && anonymize !== 'true') {
-          utils.validationError(res);
-          return;
-        }
-        processDraft(data, req.files[0].originalname, anonymize, function(err, drafts) {
-          if (drafts && Array.isArray(drafts)) {
-            drafts.forEach(function(eachDraftId) {
-              dbManip.uploadDraftCards(eachDraftId, function(err, res){
-                if (err) {
-                  console.log(err);
-                }
-              });
+    var datauri = new Datauri();
+    datauri.format('.txt', req.file.buffer);
+    console.log(datauri.content);
+    res.json({});
+    return;
+    fs.readFile(req.files[0].path, 'utf8', function (err,data) {
+      if (err) {
+        res.json({error: "Error uploading file."});
+        return console.log(err);
+      }
+      // todo validate draft
+      var anonymize = req.query.anonymous;
+      if (anonymize && anonymize !== 'true') {
+        utils.validationError(res);
+        return;
+      }
+      processDraft(data, req.files[0].originalname, anonymize, function(err, drafts) {
+        if (drafts && Array.isArray(drafts)) {
+          drafts.forEach(function(eachDraftId) {
+            dbManip.uploadDraftCards(eachDraftId, function(err, res){
+              if (err) {
+                console.log(err);
+              }
             });
-          }
-          utils.treatResult(res, err, {ids: drafts, filename: req.files[0].originalname});
+          });
+        }
+        utils.treatResult(res, err, {ids: drafts, filename: req.files[0].originalname});
 
-          next();
-        });      
-      });
-    } finally {
-      fs.unlink('./' + req.files[0].path);
-    }    
+        next();
+      });      
+    });
   });
 });
 
