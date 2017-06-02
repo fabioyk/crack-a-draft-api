@@ -239,6 +239,20 @@ var dbManip = {
   
   //// ----------------------- FORMAT MANIPULATION ----------------------- ////
   
+  getAllFormats(callback) {
+    formatManip.getAllFormats(callback, utils.createOkCallback(callback));
+  },
+
+  insertFormat(formatName, mtgoName, number, callback) {
+    formatManip.insertFormat(formatName, mtgoName, number, callback, utils.createOkCallback(callback));
+  },
+
+  getFormat(name, isMtgoName, callback) {
+    formatManip.getFormat(name, isMtgoName, callback, utils.createOkCallback(callback));
+  },
+
+  
+
   // getAllFormats(callback) {
   //   dbSchema.Format.find({drafts: {$gt: 0}}, function(err, formats) {
   //     var formattedFormats = [];
