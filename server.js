@@ -44,7 +44,7 @@ app.post("/api/draft", function (req, res, next) {
     }
     var datauri = new Datauri();
     datauri.format('.txt', req.file.buffer);
-    console.log(datauri.content);
+    console.log(req.file.buffer);
     res.json({});
     return;
     fs.readFile(req.files[0].path, 'utf8', function (err,data) {
