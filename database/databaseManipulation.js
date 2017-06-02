@@ -177,7 +177,7 @@ var dbManip = {
   },
   
   getDrafts(username, pageSize, pageNumber, callback) {
-    getDraftsByUser(username, pageSize, pageNumber, callback, function(drafts) {
+    draftManip.getDraftsByUser(username, pageSize, pageNumber, callback, function(drafts) {
       dbManip.processAndReturnDraft(drafts, callback, utils.createOkCallback(callback));
     });
     
@@ -251,7 +251,7 @@ var dbManip = {
     formatManip.getFormat(name, isMtgoName, callback, utils.createOkCallback(callback));
   },
 
-  
+
 
   // getAllFormats(callback) {
   //   dbSchema.Format.find({drafts: {$gt: 0}}, function(err, formats) {
