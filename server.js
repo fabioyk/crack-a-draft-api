@@ -10,7 +10,6 @@ var bodyParser = require("body-parser");
 var fs = require('fs');
 var multer  =   require('multer');
 var Datauri = require('datauri');
-var Buffer = require('buffer');
 
 var storage = multer.memoryStorage();  /* multer.diskStorage({
   destination: function (req, file, callback) {
