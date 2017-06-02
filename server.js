@@ -10,14 +10,7 @@ var bodyParser = require("body-parser");
 var fs = require('fs');
 var multer  =   require('multer');
 
-var storage = multer.memoryStorage();  /* multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, './uploads');
-  },
-  filename: function (req, file, callback) {
-    callback(null, file.fieldname + '-' + Date.now());
-  }
-});*/
+var storage = multer.memoryStorage();
 var upload = multer({ storage : storage, limits: { fileSize:  1000000 } }).single('file');
 
 app.use(bodyParser.json());
@@ -51,32 +44,14 @@ app.post("/api/draft", function (req, res, next) {
         return;
       }
       console.log(req.file.originalname);
-      processDraft(fileb.toString('utf8'), req.file.originalname, anonymize, function(err, drafts) {
-        if (drafts && Array.isArray(drafts)) {
-          drafts.forEach(function(eachDraftId) {
-            dbManip.uploadDraftCards(eachDraftId, function(err, res){
-              if (err) {
-                console.log(err);
-              }
-            });
-          });
-        }
-        utils.treatResult(res, err, {ids: drafts, filename: req.files[0].originalname});
-
+      processDraft(fileb.toString('utf8'), req.file.originalname, anonymize, function(err, drafts) {        
+        utils.treatResult(res, err, {ids: drafts, filename: req.file.originalname});
         next();
       });      
     } else {
       res.json({error: "Error uploading file."});
     }
     return;
-    /*fs.readFile(req.files[0].path, 'utf8', function (err,data) {
-      if (err) {
-        res.json({error: "Error uploading file."});
-        return console.log(err);
-      }
-      // todo validate draft
-      
-    });*/
   });
 });
 
