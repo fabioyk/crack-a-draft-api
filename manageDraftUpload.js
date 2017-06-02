@@ -3,7 +3,7 @@ var validation = require('./server/validation');
 
 function processDraft(rawData, fileName, isAnonymized, callback) {
   // split all the .txt by line break
-  var data = rawData.split('\r\n');
+  var data = rawData.split('\n');
   
   // get the date on the second line
   var draftDate = data[1].split(' ')[4];  
