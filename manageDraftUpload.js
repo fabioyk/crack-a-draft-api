@@ -1,4 +1,4 @@
-var dbManip = require('./databaseManipulation');
+var dbManip = require('./database/databaseManipulation');
 var validation = require('./validation');
 
 function processDraft(rawData, fileName, isAnonymized, callback) {
