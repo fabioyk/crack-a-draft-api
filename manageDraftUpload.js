@@ -16,7 +16,7 @@ function processDraft(rawData, fileName, isAnonymized, callback) {
   // lookup who is the player (has a ---> before the name)
   players.forEach(function(eachPlayer) {
     if (eachPlayer.charAt(0) === '-') {
-      player = eachPlayer.split(' ')[1];
+      player = eachPlayer.split(' ')[1].trim();
       origPlayer = player;
     }
   });
