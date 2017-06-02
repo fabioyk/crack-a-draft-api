@@ -50,7 +50,8 @@ app.post("/api/draft", function (req, res, next) {
         utils.validationError(res);
         return;
       }
-      processDraft(fileb.toString('utf8'), req.file.filename, anonymize, function(err, drafts) {
+      console.log(req.file.originalname);
+      processDraft(fileb.toString('utf8'), req.file.originalname, anonymize, function(err, drafts) {
         if (drafts && Array.isArray(drafts)) {
           drafts.forEach(function(eachDraftId) {
             dbManip.uploadDraftCards(eachDraftId, function(err, res){
