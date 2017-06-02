@@ -28,7 +28,7 @@ var draftManip = {
   getDraftsByUser(username, pageSize, pageNumber, errCallback, okCallback) {
     var queryObj = {};
     if (username) {
-      queryObj = {drafter: { $regex : new RegExp('^'+name+"$", "i") }};
+      queryObj = {drafter: { $regex : new RegExp('^'+username+"$", "i") }};
     }
     var skip = 0;
     if (pageSize && pageNumber) {
