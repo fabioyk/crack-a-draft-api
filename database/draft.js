@@ -92,7 +92,7 @@ var draftManip = {
           }
         });
         Object.keys(formats).forEach(function(format) {
-          dbSchema.Format.update({mtgoName: format}, {$inc: {drafts: formats[draft.format]}}).exec(function(err, res) {
+          dbSchema.Format.update({mtgoName: format}, {$inc: {drafts: formats[format]}}).exec(function(err, res) {
             utils.checkErr(err, res, errCallback, function(res) {
               dbSchema.Draft.remove(queryObj, function(err) {
                 utils.checkErr(err, null, errCallback, okCallback);
