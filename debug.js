@@ -6,9 +6,6 @@ dbManip.init();
 
 setTimeout(function() {
   if (process.argv[2] === 'deleteDrafts') {
-    if (process.argv[3]) {
-      return;
-    }
     draftManip.deleteDraft({}, function(err) {
       console.log('Error!');
       console.log(err);
