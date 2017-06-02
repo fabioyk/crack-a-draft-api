@@ -42,8 +42,6 @@ setTimeout(function() {
   }
   if (process.argv[2] === 'uploadAllSets') {
     dbManip.uploadAllSets();
-  }
+  }  
 
-  process.exit();
-
-}, 2000);
+}, 1000);
