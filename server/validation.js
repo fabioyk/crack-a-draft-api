@@ -53,6 +53,7 @@ module.exports = {
     }
     if (arrayCheck.length !== expectedLength) {
       console.log('VALIDATION ERROR: Unexpected length.',arrayCheck.length,expectedLength);
+      console.log(arrayCheck);
       return false;
     }
     for (var i=0; i<arrayCheck.length; i++) {
