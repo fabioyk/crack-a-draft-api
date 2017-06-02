@@ -10,6 +10,7 @@ var bodyParser = require("body-parser");
 var fs = require('fs');
 var multer  =   require('multer');
 var Datauri = require('datauri');
+var Buffer = require('buffer');
 
 var storage = multer.memoryStorage();  /* multer.diskStorage({
   destination: function (req, file, callback) {
@@ -44,10 +45,15 @@ app.post("/api/draft", function (req, res, next) {
     }
     var datauri = new Datauri();
     datauri.format('.txt', req.file.buffer);
-    console.log(req.file.buffer);
+    //console.log(req.file.buffer);
+    var fileb = Buffer.from(req.file.buffer);
+    console.log(fileb.toString('utf8'));
+    
+
+    
     res.json({});
     return;
-    fs.readFile(req.files[0].path, 'utf8', function (err,data) {
+    /*fs.readFile(req.files[0].path, 'utf8', function (err,data) {
       if (err) {
         res.json({error: "Error uploading file."});
         return console.log(err);
@@ -72,7 +78,7 @@ app.post("/api/draft", function (req, res, next) {
 
         next();
       });      
-    });
+    });*/
   });
 });
 
