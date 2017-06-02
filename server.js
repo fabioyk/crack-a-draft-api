@@ -1,31 +1,18 @@
 // server.js
 var express = require('express');
 var app = express();
-var multer  =   require('multer');
 var processDraft = require('./manageDraftUpload');
 var dbManip = require('./database/databaseManipulation');
-var validation = require('./validation');
-var utils = require('./utils');
+var validation = require('./server/validation');
+var utils = require('./server/utils');
 var cors = require('cors');
 var bodyParser = require("body-parser");
 var fs = require('fs');
+var upload = require('./server/fileUpload');
 
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
-
-
-var storage =   multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, './uploads');
-  },
-  filename: function (req, file, callback) {
-    callback(null, file.fieldname + '-' + Date.now());
-  }
-});
-var upload = multer({ storage : storage, limits: { fileSize:  1000000 } }).array('file');
-
-
 
 app.all('/', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -37,10 +24,6 @@ app.all('/', function(req, res, next) {
     setTimeout(next, 500);
   }    
 });
-
-
-
-
 
 app.post("/api/draft", function (req, res, next) {
   upload(req,res,function(err) {
@@ -92,7 +75,7 @@ app.get("/api/draft/count", function(req, res) {
   var username = req.query.username;
   
   if (username) {
-    if (username && !validation.isUsername(username)) {
+    if (!validation.isUsername(username)) {
       utils.validationError(res);
       return;
     }
@@ -120,12 +103,13 @@ app.get("/api/draft", function(req, res) {
   }
   
   if (draftId) {
+    // get a specific draft by id
     var isEmbed = req.query.embed === 'true';
     dbManip.getDraft(draftId, isEmbed, function(err, draft) {
       utils.treatResult(res, err,draft);
     })
   } else if (username) {
-    // get all drafts by username    
+    // get from all drafts by username, a certain page
     dbManip.getDrafts(username, +req.query.pageSize, +req.query.pageNumber, function(err, drafts) {
       utils.treatResultArr(res, err, drafts);
     });
@@ -136,6 +120,7 @@ app.get("/api/draft", function(req, res) {
       utils.treatResult(res, err, draft);
     });
   } else if (req.query.pageSize) {
+    // get from all drafts, a certain page
     dbManip.getDrafts('', +req.query.pageSize, +req.query.pageNumber, function(err, drafts) {
       utils.treatResultArr(res, err, drafts);
     });    
@@ -143,8 +128,6 @@ app.get("/api/draft", function(req, res) {
     res.json({error: 'Error'});
   }
 });
-
-
 
 app.post("/api/crack", function(req, res, next) {
   var params = req.body;
@@ -193,7 +176,7 @@ app.get("/api/card", function(req, res) {
 
 
 
-// listen for requests :)
+// listen for requests
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
   dbManip.init();

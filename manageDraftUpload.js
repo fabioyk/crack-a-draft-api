@@ -1,5 +1,5 @@
 var dbManip = require('./database/databaseManipulation');
-var validation = require('./validation');
+var validation = require('./server/validation');
 
 function processDraft(rawData, fileName, isAnonymized, callback) {
   // split all the .txt by line break
@@ -74,7 +74,6 @@ function processDraft(rawData, fileName, isAnonymized, callback) {
       if (filteredCardName.indexOf('/') !== -1) {
         filteredCardName = filteredCardName.replace('/', ' // ');
       }
-      // TODO: deal with split cards
       drafts[draftsIndex].packs[packIndex].push(filteredCardName);
       
       pickIndex++; // thats one pick done
