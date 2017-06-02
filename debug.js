@@ -17,7 +17,7 @@ setTimeout(function() {
     });
   }
   if (process.argv[2] === 'deleteOneDraft') {
-    draftManip.deleteDraft({'_id': { '$oid': process.argv[3]}}, function(err) {
+    draftManip.deleteDraft({'_id': process.argv[3]}, function(err) {
       console.log('Error!');
       console.log(err);
     }, function(ok) {
