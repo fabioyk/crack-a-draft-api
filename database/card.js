@@ -41,10 +41,13 @@ var cardManip = {
               missingCards.push(eachCard);
             }
           });
-          
-          console.log('A Card was missed!');
-          console.log(missingCards);
-          errCallback('Card data missing');
+          if (missingCards.length > 0) {
+            console.log('A Card was missed!');
+            console.log(missingCards);
+            errCallback('Card data missing');
+          } else {
+            okCallback(cards);
+          }          
         } else {
           okCallback(cards);
         }
