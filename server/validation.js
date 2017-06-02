@@ -190,7 +190,8 @@ module.exports = {
   checkCharacters(stringCheck, alphabet) {    
     for (var i=0; i<stringCheck.length; i++) {
       if (alphabet.indexOf(stringCheck.charAt(i)) === -1) {
-        console.log('VALIDATION ERROR:',stringCheck,'Not from alphabet',alphabet);
+        console.log('VALIDATION ERROR: '+stringCheck+' Not from alphabet '+alphabet);
+        console.log('At position '+i+' - '+stringCheck.chartAt(i));
         return false;
       }
     }
