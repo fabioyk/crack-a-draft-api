@@ -28,6 +28,10 @@ app.all('/', function(req, res, next) {
   }    
 });
 
+app.get('/', function(req, res) {
+  res.json({alive:'hi'});
+});
+
 app.post("/api/draft", function (req, res, next) {
   upload(req,res,function(err) {
     if(err) {
