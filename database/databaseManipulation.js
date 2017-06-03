@@ -46,10 +46,14 @@ var dbManip = {
       draftManip.uploadDrafts(draftsObj, callback, function(drafts) {
         formatManip.getFormat(format, true, function(formatErr) {
           if (formatErr === 'Not found') {
-            formatManip.insertFormat(format, formatManip.getNameFromMtgo(format), draftsObj.length, callback, utils.createOkCallback(callback));
+            formatManip.insertFormat(format, formatManip.getNameFromMtgo(format), draftsObj.length, callback, function(formatAdded) {
+              callback(null, drafts);
+            });
           }
         }, function(formatObj) {
-          formatManip.incrementFormat(format, draftsObj.length, callback, utils.createOkCallback(callback));
+          formatManip.incrementFormat(format, draftsObj.length, callback, function(formatFound) {
+              callback(null, drafts);
+            });
         });
       });
     });
