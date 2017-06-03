@@ -54,7 +54,7 @@ var draftManip = {
   },
 
   uploadCrack(draftId, picks, archetype, errCallback, okCallback) {
-    var crackId = dbManip.generateCrackId(picks);
+    var crackId = draftManip.generateCrackId(picks);
     
     var crackObj = {
       id: crackId,
