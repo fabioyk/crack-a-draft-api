@@ -80,7 +80,7 @@ app.get("/api/draft/count", function(req, res) {
 
 app.get("/api/draft", function(req, res) {
   var draftId = req.query.id;
-  var draftIds = req.query.ids;
+  var draftIds = req.query.ids.split(',');
   var username = req.query.username;
   var format = req.query.format;
     
