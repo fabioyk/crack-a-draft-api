@@ -171,7 +171,6 @@ app.get("/api/card", function(req, res) {
       utils.treatResult(res, err, card);
     });
   } else if (cardArray) {
-    cardArray = JSON.parse(cardArray);
     dbManip.getCardsFromList(cardArray, function(err, card) {
       utils.treatResult(res, err, card);
     });
