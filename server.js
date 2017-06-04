@@ -163,7 +163,7 @@ app.get("/api/card", function(req, res) {
         cardArray[i] = cardArray[i].substring(1);
       }
       if (cardArray[i].charAt(cardArray[i].length-1) === '"') {
-        cardArray[i] = cardArray[i].substring(0, cardArray.length-2);
+        cardArray[i] = cardArray[i].substring(0, cardArray[i].length-2);
       }
     }
   }
