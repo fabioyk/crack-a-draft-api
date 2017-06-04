@@ -156,14 +156,14 @@ app.get("/api/card", function(req, res) {
 
   if (cardArray) {
     cardArray = cardArray.substring(1);
-    cardArray = cardArray.substring(0, cardArray.length-2);
+    cardArray = cardArray.substring(0, cardArray.length-1);
     cardArray = cardArray.split(',');
     for (var i=0; i<cardArray.length; i++) {
       if (cardArray[i].charAt(0) === '"') {
         cardArray[i] = cardArray[i].substring(1);
       }
       if (cardArray[i].charAt(cardArray[i].length-1) === '"') {
-        cardArray[i] = cardArray[i].substring(0, cardArray[i].length-2);
+        cardArray[i] = cardArray[i].substring(0, cardArray[i].length-1);
       }
     }
   }
