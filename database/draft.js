@@ -23,7 +23,7 @@ var draftManip = {
         }
       })
     });
-    dbSchema.Draft.find({"$or:": queryObj}, function(err, drafts) {
+    dbSchema.Draft.find({"$or": queryObj}, function(err, drafts) {
       utils.checkErrNotFound(err, drafts, errCallback, okCallback);
     });
   },
