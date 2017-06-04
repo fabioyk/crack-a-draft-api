@@ -70,6 +70,10 @@ var dbManip = {
       }
     });
   },
+
+  getDraftsById(draftIds, callback) {
+    draftManip.getDraftsById(draftIds, callback, utils.createOkCallback(callback));
+  },
   
   getRandomDraftByFormat(format, randomSize, callback) {
     draftManip.getRandomDraft(format, randomSize, callback, function(draftFound) {

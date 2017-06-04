@@ -14,6 +14,20 @@ var draftManip = {
     });
   },
 
+  getDraftsById(draftIds, errCallback, okCallback) {
+    var queryObj = [];
+    draftIds.forEach(function(draftId) {
+      queryObj.push({
+        '_id': {
+          '$oid': draftId
+        }
+      })
+    });
+    dbSchema.Draft.find({"$or:": queryObj}, function(err, drafts) {
+      utils.checkErrNotFound(err, drafts, errCallback, okCallback);
+    });
+  },
+
   getRandomDraft(format, randomLimit, errCallback, okCallback) {
     var random = Math.floor(Math.random() * randomLimit);
     var queryObj = {};

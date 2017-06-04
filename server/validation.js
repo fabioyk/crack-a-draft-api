@@ -1,4 +1,4 @@
-module.exports = {
+var validation = {
   hexCharacters: '0123456789abcdef',
   alphanumeric: '0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm',
   username: '0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm -_',
@@ -36,6 +36,23 @@ module.exports = {
       return false;
     }
     return this.checkCharacters(stringCheck, this.username);
+  },
+
+  isDraftIdArray(arrayCheck) {
+    if (!Array.isArray(arrayCheck)) {
+      console.log('VALIDATION ERROR: Draft Id Array Not an array');
+      return false;
+    }
+    if (arrayCheck.length <= 0 || arrayCheck.length > 20) {
+      console.log('VALIDATION ERROR: Draft Id Array Wrong Size',arrayCheck.length);
+      return false;
+    }
+    arrayCheck.forEach(function(draftId) {
+      if (!validation.isDraftId(draftId)) {
+        return false;
+      }
+    });
+    return true;
   },
   
   isDraftId(stringCheck) {
@@ -197,3 +214,5 @@ module.exports = {
     return true;
   }
 };
+
+module.exports = validation;

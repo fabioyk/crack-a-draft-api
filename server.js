@@ -80,12 +80,14 @@ app.get("/api/draft/count", function(req, res) {
 
 app.get("/api/draft", function(req, res) {
   var draftId = req.query.id;
+  var draftIds = req.query.ids;
   var username = req.query.username;
   var format = req.query.format;
     
   if ((username && !validation.isUsername(username)) ||
       (draftId && !validation.isDraftId(draftId)) ||
-      (format && !validation.isFormat(format))) {
+      (format && !validation.isFormat(format)) ||
+      (draftIds && !validation.isDraftIdArray(draftIds))) {
     utils.validationError(res);
     return;
   }
@@ -111,7 +113,11 @@ app.get("/api/draft", function(req, res) {
     // get from all drafts, a certain page
     dbManip.getDrafts('', +req.query.pageSize, +req.query.pageNumber, function(err, drafts) {
       utils.treatResultArr(res, err, drafts);
-    });    
+    });
+  } else if (draftIds) {
+      dbManip.getDraftsById(draftIds, function(err, drafts) {
+        utils.treatResultArr(res, err, drafts);
+      });
   } else {
     res.json({error: 'Error'});
   }
