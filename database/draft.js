@@ -18,9 +18,7 @@ var draftManip = {
     var queryObj = [];
     draftIds.forEach(function(draftId) {
       queryObj.push({
-        '_id': {
-          '$oid': draftId
-        }
+        '_id': draftId
       })
     });
     dbSchema.Draft.find({"$or": queryObj}, function(err, drafts) {
