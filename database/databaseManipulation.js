@@ -72,7 +72,9 @@ var dbManip = {
   },
 
   getDraftsById(draftIds, callback) {
-    draftManip.getDraftsById(draftIds, callback, utils.createOkCallback(callback));
+    draftManip.getDraftsById(draftIds, callback, function(drafts) {
+      dbManip.processAndReturnDraft(drafts, callback, utils.createOkCallback(callback));
+    });
   },
   
   getRandomDraftByFormat(format, randomSize, callback) {
