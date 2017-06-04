@@ -155,7 +155,9 @@ app.get("/api/card", function(req, res) {
   var cardArray = req.query.array;
 
   if (cardArray) {
-    cardArray = JSON.parse(cardArray);
+    cardArray = cardArray.substring(1);
+    cardArray = cardArray.substring(0, cardArray.length-2);
+    cardArray = cardArray.split(',');
   }
   
   if ((cardName && !validation.isCardName(cardName)) ||
