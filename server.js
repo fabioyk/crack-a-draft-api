@@ -80,10 +80,14 @@ app.get("/api/draft/count", function(req, res) {
 
 app.get("/api/draft", function(req, res) {
   var draftId = req.query.id;
-  var draftIds = req.query.ids.split(',');
+  var draftIds = req.query.ids;
   var username = req.query.username;
   var format = req.query.format;
-    
+
+  if (draftIds) {
+    draftIds = draftIds.split(',');
+  }
+
   if ((username && !validation.isUsername(username)) ||
       (draftId && !validation.isDraftId(draftId)) ||
       (format && !validation.isFormat(format)) ||
