@@ -82,9 +82,6 @@ function processDraft(rawData, fileName, isAnonymized, callback) {
     
     packIndex++; // finished a pack    
   }
-
-  console.log('Player: '+player);
-  console.log('Format: '+format);
     
   if (!validation.isUsername(player) ||
       !validation.isFormat(format)) {

@@ -47,7 +47,7 @@ app.post("/api/draft", function (req, res, next) {
         utils.validationError(res);
         return;
       }
-      console.log(req.file.originalname);
+
       processDraft(fileb.toString('utf8'), req.file.originalname, anonymize, function(err, drafts) {        
         utils.treatResult(res, err, {ids: drafts, filename: req.file.originalname});
         next();
@@ -138,6 +138,7 @@ app.post("/api/crack", function(req, res, next) {
   }
   
   dbManip.uploadCrack(params.draftId, params.picks, params.archetype, function(err, crackId) {
+    console.log('Crack uploaded, archetype '+params.archetype+' draftId:'+params.draftId+' crackId:'+crackId);
     utils.treatResult(res, err, {id: crackId});
     
     next();
@@ -155,17 +156,7 @@ app.get("/api/card", function(req, res) {
   var cardArray = req.query.array;
 
   if (cardArray) {
-    cardArray = cardArray.substring(1);
-    cardArray = cardArray.substring(0, cardArray.length-1);
-    cardArray = cardArray.split(',');
-    for (var i=0; i<cardArray.length; i++) {
-      if (cardArray[i].charAt(0) === '"') {
-        cardArray[i] = cardArray[i].substring(1);
-      }
-      if (cardArray[i].charAt(cardArray[i].length-1) === '"') {
-        cardArray[i] = cardArray[i].substring(0, cardArray[i].length-1);
-      }
-    }
+    cardArray = cardArray.split('|*|*|');
   }
   
   if ((cardName && !validation.isCardName(cardName)) ||

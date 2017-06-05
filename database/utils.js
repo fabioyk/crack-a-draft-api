@@ -40,7 +40,7 @@ module.exports = {
         ind = 0;}
       val=val*srclen+ind;
     }
-    console.log(val)
+    
     if(val<0) {
       return 0;
     }

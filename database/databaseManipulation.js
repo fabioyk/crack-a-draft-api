@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var async = require('async');
 var utils = require('./utils');
 
 var cardManip = require('./card');
