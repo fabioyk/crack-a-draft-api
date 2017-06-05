@@ -40,6 +40,14 @@ app.post("/api/draft", function (req, res, next) {
     }
 
     var fileb = Buffer.from(req.file.buffer);
+
+    var draftDate = req.query.date;
+    if (!draftDate) {
+      draftDate = 0;
+    } else if (!validation.isNumericString(draftDate)) {
+      utils.validationError(res);
+      return;
+    }
     
     if (fileb) {
       var anonymize = req.query.anonymous;
@@ -48,7 +56,7 @@ app.post("/api/draft", function (req, res, next) {
         return;
       }
 
-      processDraft(fileb.toString('utf8'), req.file.originalname, anonymize, function(err, drafts) {        
+      processDraft(fileb.toString('utf8'), req.file.originalname, +draftDate, anonymize, function(err, drafts) {        
         utils.treatResult(res, err, {ids: drafts, filename: req.file.originalname});
         next();
       });      

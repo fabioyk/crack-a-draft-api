@@ -27,13 +27,14 @@ var dbManip = {
   
   //// ----------------------- DRAFT MANIPULATION ----------------------- ////
     
-  uploadDrafts(username, draftDate, format, draftData, callback) {
+  uploadDrafts(username, draftDate, format, date, draftData, callback) {
     var draftsObj = [];
     
     draftData.forEach(function(singleDraftData) {
       draftsObj.push({
         drafter: username,
         submitDate: Date.now(),
+        modifiedDate: date,
         format: format,
         packs: singleDraftData.packs,
         picks: singleDraftData.picks,
@@ -94,7 +95,10 @@ var dbManip = {
 
   processAndReturnDraft(draft, errCallback, okCallback) {
     if (!Array.isArray(draft)) {
-      formatManip.getFormat(draft.format, true, errCallback, function(formatFound) {            
+      formatManip.getFormat(draft.format, true, errCallback, function(formatFound) {
+        if (!draft.modifiedDate) {
+          draft.modifiedDate = 0;
+        }
         okCallback({
           draft: draft,
           format: {
@@ -120,6 +124,10 @@ var dbManip = {
               return currentName;
             }            
           }, eachDraft.format);
+
+          if (!eachDraft.modifiedDate) {
+            eachDraft.modifiedDate = 0;
+          }
 
           draftDataArr.push({
             draft: eachDraft,

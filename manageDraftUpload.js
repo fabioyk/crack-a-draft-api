@@ -1,7 +1,7 @@
 var dbManip = require('./database/databaseManipulation');
 var validation = require('./server/validation');
 
-function processDraft(rawData, fileName, isAnonymized, callback) {
+function processDraft(rawData, fileName, date, isAnonymized, callback) {
   // split all the .txt by line break
   var data = rawData.split('\r\n');
   
@@ -101,7 +101,7 @@ function processDraft(rawData, fileName, isAnonymized, callback) {
     callback('Validation error', null);
   } else {
     console.log(origPlayer + ' uploaded ' + validDrafts.length + ' drafts of ' + format);  
-    dbManip.uploadDrafts(player, draftDate, format, validDrafts, callback);
+    dbManip.uploadDrafts(player, draftDate, format, date, validDrafts, callback);
   }  
 }
 
