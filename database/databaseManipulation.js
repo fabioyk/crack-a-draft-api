@@ -164,7 +164,7 @@ var dbManip = {
             packs: packs,
             picks: picks,
             cracks: crackArr,
-            faceCard: draft.packs[0][13],
+            faceCard: eachDraft.packs[0][13],
             numCracks: eachDraft.cracks.length
           },
             format: {
