@@ -29,34 +29,32 @@ var dbManip = {
     
   uploadDrafts(username, draftDate, format, date, draftData, callback) {
     var draftsObj = [];
-    
-    draftData.forEach(function(singleDraftData) {
-      draftsObj.push({
-        drafter: username,
-        submitDate: Date.now(),
-        modifiedDate: date,
-        format: format,
-        packs: singleDraftData.packs,
-        picks: singleDraftData.picks,
-        cracks: []
+
+    formatManip.getFormat(format, true, callback, function(formatFound) {
+      draftData.forEach(function(singleDraftData) {
+        draftsObj.push({
+          drafter: username,
+          submitDate: Date.now(),
+          modifiedDate: date,
+          format: format,
+          packs: singleDraftData.packs,
+          picks: singleDraftData.picks,
+          cracks: []
+        });
       });
-    });
-    
-    cardManip.checkMissingCards(draftsObj, callback, function(cardsOk) {      
-      draftManip.uploadDrafts(draftsObj, callback, function(drafts) {
-        formatManip.getFormat(format, true, function(formatErr) {
-          if (formatErr === 'Not found') {
-            formatManip.insertFormat(format, formatManip.getNameFromMtgo(format), draftsObj.length, callback, function(formatAdded) {
-              callback(null, drafts);
-            });
-          }
-        }, function(formatObj) {
+
+      cardManip.checkMissingCards(draftsObj, callback, function(cardsOk) {      
+        draftManip.uploadDrafts(draftsObj, callback, function(drafts) {          
           formatManip.incrementFormat(format, draftsObj.length, callback, function(formatFound) {
-              callback(null, drafts);
-            });
+            callback(null, drafts);
+          });
         });
       });
     });
+    
+    
+    
+    
   },
   
   getDraft(draftId, isCardInfoEmbed, callback) {
