@@ -60,9 +60,9 @@ var dbManip = {
   getDraft(draftId, isCardInfoEmbed, callback) {
     draftManip.getDraftById(draftId, callback, function(draftFound) {
       if (!isCardInfoEmbed) {
-        dbManip.processAndReturnDraft(draftFound, callback, utils.createOkCallback(callback));
+        dbManip.processAndReturnDraft(draftFound, false, callback, utils.createOkCallback(callback));
       } else {
-        dbManip.processAndReturnDraft(draftFound, callback, function(draft) {
+        dbManip.processAndReturnDraft(draftFound, false, callback, function(draft) {
           cardManip.createCardsArr(draft, callback, utils.createOkCallback(callback));
         });
       }
@@ -71,19 +71,19 @@ var dbManip = {
 
   getDraftsById(draftIds, callback) {
     draftManip.getDraftsById(draftIds, callback, function(drafts) {
-      dbManip.processAndReturnDraft(drafts, callback, utils.createOkCallback(callback));
+      dbManip.processAndReturnDraft(drafts, true, callback, utils.createOkCallback(callback));
     });
   },
   
   getRandomDraftByFormat(format, randomSize, callback) {
     draftManip.getRandomDraft(format, randomSize, callback, function(draftFound) {
-      dbManip.processAndReturnDraft(draftFound, callback, utils.createOkCallback(callback));
+      dbManip.processAndReturnDraft(draftFound, true, callback, utils.createOkCallback(callback));
     });    
   },
   
   getDrafts(username, pageSize, pageNumber, callback) {
     draftManip.getDraftsByUser(username, pageSize, pageNumber, callback, function(drafts) {
-      dbManip.processAndReturnDraft(drafts, callback, utils.createOkCallback(callback));
+      dbManip.processAndReturnDraft(drafts, true, callback, utils.createOkCallback(callback));
     });
   },
   
@@ -91,14 +91,24 @@ var dbManip = {
     draftManip.getDraftsCount(username, callback, utils.createOkCallback(callback));
   },
 
-  processAndReturnDraft(draft, errCallback, okCallback) {
+  processAndReturnDraft(draft, isSmall, errCallback, okCallback) {
     if (!Array.isArray(draft)) {
       formatManip.getFormat(draft.format, true, errCallback, function(formatFound) {
         if (!draft.modifiedDate) {
           draft.modifiedDate = 0;
         }
+        var crackArr = isSmall ? [] : draft.cracks;
         okCallback({
-          draft: draft,
+          draft: {
+            _id: draft._id,
+            drafter: draft.drafter,
+            submitDate: draft.submitDate,
+            format: draft.format,
+            packs: draft.packs,
+            picks: draft.picks,
+            cracks: crackArr,
+            numCracks: draft.cracks.length
+          },
           format: {
             name: formatFound.name,
             mtgoName: formatFound.mtgoName
@@ -127,8 +137,19 @@ var dbManip = {
             eachDraft.modifiedDate = 0;
           }
 
+          var crackArr = isSmall ? [] : eachDraft.cracks;
+
           draftDataArr.push({
-            draft: eachDraft,
+            draft: {
+            _id: eachDraft._id,
+            drafter: eachDraft.drafter,
+            submitDate: eachDraft.submitDate,
+            format: eachDraft.format,
+            packs: eachDraft.packs,
+            picks: eachDraft.picks,
+            cracks: crackArr,
+            numCracks: eachDraft.cracks.length
+          },
             format: {
               name: formatName,
               mtgoName: eachDraft.format
