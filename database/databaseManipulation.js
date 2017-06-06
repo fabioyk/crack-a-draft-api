@@ -97,6 +97,14 @@ var dbManip = {
         if (!draft.modifiedDate) {
           draft.modifiedDate = 0;
         }
+        var crackArr = [];
+        var packs = [];
+        var picks = [];
+        if (!isSmall) {
+          crackArr = draft.cracks;
+          packs = draft.packs;
+          picks = draft.picks;
+        }
         var crackArr = isSmall ? [] : draft.cracks;
         okCallback({
           draft: {
@@ -104,9 +112,10 @@ var dbManip = {
             drafter: draft.drafter,
             submitDate: draft.submitDate,
             format: draft.format,
-            packs: draft.packs,
-            picks: draft.picks,
+            packs: packs,
+            picks: picks,
             cracks: crackArr,
+            faceCard: draft.packs[0][13],
             numCracks: draft.cracks.length
           },
           format: {
@@ -137,7 +146,14 @@ var dbManip = {
             eachDraft.modifiedDate = 0;
           }
 
-          var crackArr = isSmall ? [] : eachDraft.cracks;
+          var crackArr = [];
+          var packs = [];
+          var picks = [];
+          if (!isSmall) {
+            crackArr = eachDraft.cracks;
+            crackArr = eachDraft.packs;
+            crackArr = eachDraft.picks;
+          }
 
           draftDataArr.push({
             draft: {
@@ -145,9 +161,10 @@ var dbManip = {
             drafter: eachDraft.drafter,
             submitDate: eachDraft.submitDate,
             format: eachDraft.format,
-            packs: eachDraft.packs,
-            picks: eachDraft.picks,
+            packs: packs,
+            picks: picks,
             cracks: crackArr,
+            faceCard: draft.packs[0][13],
             numCracks: eachDraft.cracks.length
           },
             format: {
