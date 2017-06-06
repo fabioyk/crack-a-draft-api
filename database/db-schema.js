@@ -4,6 +4,7 @@ var schemas = {
   draftSchema: new mongoose.Schema({
     drafter: { type: String, index: true },
     submitDate: { type: Date, index: true },
+    modifiedDate: Date,
     format: String,
     packs: [[String]],
     picks: [Number],
