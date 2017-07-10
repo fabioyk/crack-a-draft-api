@@ -96,10 +96,18 @@ var cardManip = {
               cardObj.colors = [];
               
               card.names.forEach(function(eachName) {
-                cardObj.cmc += allCards[eachName].cmc;
-                cardObj.types = cardObj.types.concat(allCards[eachName].types);
-                cardObj.colors = cardObj.colors.concat(allCards[eachName].colors);
-                cardObj.colorIdentity = cardObj.colorIdentity.concat(allCards[eachName].colorIdentity);
+                var otherCard;
+                allCards.forEach(function(otherPartCard) {
+                  if (otherPartCard.name === eachName) {
+                    otherCard = otherPartCard;
+                  }
+                });
+                if (otherCard) {
+                  cardObj.cmc += otherCard.cmc;
+                  cardObj.types = cardObj.types.concat(otherCard.types);
+                  cardObj.colors = cardObj.colors.concat(otherCard.colors);
+                  cardObj.colorIdentity = cardObj.colorIdentity.concat(otherCard.colorIdentity);
+                }
               });
               if (cardObj.colors.length > 0) {
                 cardObj.colors.forEach(function(eachColor, i) {
