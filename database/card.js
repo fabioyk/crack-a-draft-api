@@ -1,5 +1,6 @@
 var dbSchema = require('./db-schema');
 var utils = require('./utils');
+var request = require('request');
 
 var cardManip = {
   checkMissingCards(draftsObj, errCallback, okCallback) {
