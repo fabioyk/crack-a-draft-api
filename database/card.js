@@ -69,36 +69,33 @@ var cardManip = {
         console.log(error);
         return;
       } else {
-        var allCards = JSON.parse(body);
-        
-        var allCardNames = Object.keys(allCards);
-        
+        var allCards = JSON.parse(body).cards;
+                
         var ourCards = [];
         
-        allCardNames.forEach(function(cardName) {
-          var thisCard = allCards[cardName];
+        allCards.forEach(function(card) {
           var cardObj = {};
-          if (thisCard.layout !== 'split' && thisCard.layout !== 'aftermath' && 
-              !((thisCard.layout === 'double-faced' || thisCard.layout === 'flip') && cardName !== thisCard.names[0])) {
-            cardObj.name = cardName;
-            cardObj.cmc = thisCard.cmc;
-            cardObj.colorIdentity = thisCard.colorIdentity;
-            cardObj.types = thisCard.types;
-            cardObj.colors = thisCard.colors;
+          if (card.layout !== 'split' && card.layout !== 'aftermath' && 
+              !((card.layout === 'double-faced' || card.layout === 'flip') && card.name !== card.names[0])) {
+            cardObj.name = card.name;
+            cardObj.cmc = card.cmc;
+            cardObj.colorIdentity = card.colorIdentity;
+            cardObj.types = card.types;
+            cardObj.colors = card.colors;
             if (cardObj.colors) {
               cardObj.colors.forEach(function(eachColor, i) {
                 cardObj.colors[i] = colorLetter[colorNames.indexOf(eachColor)];
               })
             }
-          } else if (thisCard.layout === 'split' || thisCard.layout === 'aftermath') {
-            if (cardName === thisCard.names[0]) {
-              cardObj.name = thisCard.names.join(' // ');
+          } else if (card.layout === 'split' || card.layout === 'aftermath') {
+            if (card.name === card.names[0]) {
+              cardObj.name = card.names.join(' // ');
               cardObj.cmc = 0;
               cardObj.colorIdentity = [];
               cardObj.types = [];
               cardObj.colors = [];
               
-              thisCard.names.forEach(function(eachName) {
+              card.names.forEach(function(eachName) {
                 cardObj.cmc += allCards[eachName].cmc;
                 cardObj.types = cardObj.types.concat(allCards[eachName].types);
                 cardObj.colors = cardObj.colors.concat(allCards[eachName].colors);
