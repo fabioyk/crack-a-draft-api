@@ -35,9 +35,9 @@ setTimeout(function() {
   }
   if (process.argv[2] === 'uploadSet') {
     if (process.argv[3]) {
-      dbManip.uploadAllSets(process.argv[3]);
+      dbManip.uploadAllCards(process.argv[3]);
     } else {
-      dbManip.uploadAllSets(null);
+      dbManip.uploadAllCards(null);
     }
   }
   if (process.argv[2] === 'uploadAllSets') {
