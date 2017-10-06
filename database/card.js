@@ -27,30 +27,33 @@ var cardManip = {
   },
 
   getCardsFromList(cardArr, errCallback, okCallback) {
+    var cardArr = cardArr.filter(utils.filterRepeats);
     var query = cardArr.map(function(eachCardName) {
       return {name: eachCardName};
     });
     dbSchema.Card.find({$or: query}, function(err, cards) {
-      utils.checkErr(err, cards, errCallback, function(cards) {        
-        if (cardArr.length != cards.length) {
-          var cardsGot = cards.map(function(eachCard) {
-            return eachCard.name;
-          });
-          var missingCards = [];
-          cardArr.forEach(function(eachCard) {
-            if (cardsGot.indexOf(eachCard) === -1) {
-              missingCards.push(eachCard);
+      utils.checkErr(err, cards, errCallback, function(cards) { 
+        var result = [];
+        var missing = [];
+        cardArr.forEach(function(eachCard) {
+          var checked = false;
+          for (var i = 0; i < cards.length; i++) {
+            if (cards[i].name === eachCard) {
+              result.push(cards[i]);
+              checked = true;
+              break;
             }
-          });
-          if (missingCards.length > 0) {
-            console.log('A Card was missed!');
-            console.log(missingCards);
-            errCallback('Card data missing');
-          } else {
-            okCallback(cards);
-          }          
+          }
+          if (!checked) {
+            missing.push(eachCard);
+          }
+        });
+        if (result.length !== cardArr.length) {
+          console.log('A Card was missed!');
+          console.log(missing);
+          errCallback('Card data missing');
         } else {
-          okCallback(cards);
+          okCallback(result);
         }
       });
     });
